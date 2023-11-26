@@ -1,15 +1,20 @@
 <template>
+    <!-- Header component of the application -->
     <header>
+      <!-- Container for navigation buttons -->
       <div class="Button-container">
-          <router-link class="link" to="/">Posts</router-link> 
-          <router-link class="link" to="/login">Login</router-link>
+        <!-- Navigation link to the Posts page -->
+        <router-link class="link" to="/">Posts</router-link>
+        <!-- Navigation link to the Login page -->
+        <router-link class="link" to="/login">Login</router-link>
       </div>
     </header>
   </template>
   
   <script>
   export default {
-    name: "AppHeader",
+    name: "AppHeader", // Name of the component
+    // This component acts as the header for the app, containing navigation links.
   };
   </script>
   

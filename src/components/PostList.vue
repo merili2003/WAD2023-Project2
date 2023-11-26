@@ -1,37 +1,50 @@
 <template>
+    <!-- Container for displaying a list of posts -->
     <div class="Posts-container">
+        <!-- Loop through each post in the postList -->
         <div v-for="(post, index) in postList" :key="index" class="thisPost">
+            <!-- Post header with profile picture and date -->
             <div class="header">
                 <img :src="post.pfp" alt="Profile picture">
                 <p>{{ post.date }}</p>
             </div>
+            <!-- Main content of the post -->
             <div class="Post-content">
+                <!-- Conditionally render an image if it exists in the post data -->
                 <img v-if="post.image" :src="post.image" :alt="post['alt-image']">
+                <!-- Display the main text body of the post -->
                 <p>{{ post.body }}</p>
             </div>
+            <!-- Footer section of the post with like button and like count -->
             <div class="footer">
+                <!-- Button to like the post -->
                 <button @click="addLike(index)">
                     <img src="@/assets/like.png" alt="Like">
                 </button>
+                <!-- Display the number of likes if they exist -->
                 <p v-if="post.likes !== undefined && post.likes !== null">Likes: {{ post.likes }}</p>
             </div>
         </div>
+        <!-- Button to reset likes for all posts -->
         <button class="link" @click="resetLikes">Reset Likes</button>
     </div>
 </template>
 
 <script>
 export default {
-    name: "PostList",
+    name: "PostList", // Name of the component
     computed: {
+        // Computed property to access the list of posts from the store
         postList() {
             return this.$store.state.postList;
         }
     },
     methods: {
+        // Method to dispatch action to add a like to a post
         addLike(postIndex) {
             this.$store.dispatch("addLikeAction", postIndex);
         },
+        // Method to dispatch action to reset likes for all posts
         resetLikes() {
             this.$store.dispatch("resetLikesAction");
         }

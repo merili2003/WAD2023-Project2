@@ -1,23 +1,40 @@
 <template>
-  <div>      
+  <!-- Main container for the login form. -->
+  <div>
+    <!-- Form element using Vue's submit.prevent directive to manage form submission in a Vue-specific way. -->
     <form @submit.prevent="validateForm">
+      <!-- Title of the form for user context. -->
       <h2>Create an account</h2>
+
+      <!-- Input field for the user's name with Vue's v-model directive for two-way data binding. -->
       <label for="name">Name</label>
       <input type="name" required v-model="name">
+
+      <!-- Input field for the user's email, also utilizing Vue's v-model for binding. -->
       <label for="email">Email</label>
       <input type="email" required v-model="email">
+
+      <!-- Input field for password with Vue's v-model for data synchronization. -->
       <label for="password">Password</label>
       <input type="password" required v-model="password">
+
+      <!-- Conditional rendering of name validation errors using Vue's v-if directive. -->
       <div v-if="validateName" class="error"> {{ validateName }} </div>
+
+      <!-- Conditional rendering of password validation errors with list rendering using v-for. -->
       <div v-if="validatePassword.length" class="error">
         <ul>
           <li v-for="(error, index) in validatePassword" :key="index">{{ error }}</li>
         </ul>
       </div>
+
+      <!-- Checkbox for agreeing to terms and conditions, crucial for legal compliance. -->
       <div>
         <input type="checkbox" required v-model="terms">
         <label for="checkbox">Accept terms and conditions</label>
       </div>
+
+      <!-- Button to submit the form, invoking the login method. -->
       <div class="submit">
         <button @click="login">Sign up</button>
       </div>
@@ -26,12 +43,12 @@
 </template>
 
 <script>
-import router from '@/router';
 
 export default {
   name: "LoginView", 
   data() {
     return {
+      // Variables for storing user input and validation messages, reactive to user interactions.
       name: '',
       email: '',
       password: '',
@@ -41,41 +58,41 @@ export default {
     };
   },
   methods: {
+    // Method to validate form fields with custom rules.
     validateForm() {
+      // Name validation logic.
       this.validateName = (this.name.length <= 0 || this.name.length > 15) ? 'Name must be shorter than 15 chars and at least 1 char' : '';
       let errors = [];
-      if (!/^[A-Z]/.test(this.password)) {
-        errors.push("Must start with an uppercase alphabet character.");
-      }
-      if (!/[a-z].*[a-z]/.test(this.password)) {
-        errors.push("Must include at least two lowercase alphabet characters.");
-      }
-      if (!/\d/.test(this.password)) {
-        errors.push("Must include at least one numeric value.");
-      }
-      if (!/_/.test(this.password)) {
-        errors.push("Must include the character '_'.");
-      }
-      if (this.password.length < 8 || this.password.length > 15) {
-        errors.push("Must be between 8-15 characters in length.");
-      }
+      // Password validation rules using regular expressions.
+      if (!/^[A-Z]/.test(this.password)) errors.push("Must start with an uppercase alphabet character.");
+      if (!/[a-z].*[a-z]/.test(this.password)) errors.push("Must include at least two lowercase alphabet characters.");
+      if (!/\d/.test(this.password)) errors.push("Must include at least one numeric value.");
+      if (!/_/.test(this.password)) errors.push("Must include the character '_'.");
+      if (this.password.length < 8 || this.password.length > 15) errors.push("Must be between 8-15 characters in length.");
+      // Assigns the array of password validation error messages to the 'validatePassword' reactive property.
       this.validatePassword = errors;
-    },
-    login() {
-    this.validateForm();
-    if (this.validateName === '' && !this.validatePassword.length && this.terms) {
-      this.$store.dispatch("loginAction", { name: this.name, email: this.email })
-        .then(() => {
-          this.$router.push({ path: '/' });
-        })
-        .catch(error => {
-          console.error("Error during login:", error);
-        });
-    } else {
-      console.log("Login validation failed");
-    }
-  },
 
+    },
+    // Login method to handle user login.
+    login() {
+      // Trigger form validation before proceeding.
+      this.validateForm();
+      // Check if all validations are passed and terms are agreed upon.
+      if (this.validateName === '' && !this.validatePassword.length && this.terms) {
+        // Dispatch login action and handle promise.
+        this.$store.dispatch("loginAction", { name: this.name, email: this.email })
+          .then(() => {
+            // Navigate to the home page on successful login.
+            this.$router.push({ path: '/' });
+          })
+          .catch(error => {
+            // Log error in case of login failure.
+            console.error("Error during login:", error);
+          });
+      } else {
+        console.log("Login validation failed");
+      }
+    },
   }
 }
 </script>

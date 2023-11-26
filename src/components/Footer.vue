@@ -1,16 +1,19 @@
 <template>
+    <!-- Footer component of the application -->
     <footer>
-        &copy; WAD Galaxy. All rights reserved.
+      &copy; WAD Galaxy. All rights reserved.
     </footer>
   </template>
   
   <script>
   export default {
-    name: "AppFooter",
+    name: "AppFooter", // Name of the component
+    // This component serves as the footer for the app, displaying a simple copyright notice.
   };
   </script>
   
   <style scoped>
+
 footer {
     display: flex;;
     justify-content: center;

@@ -1,20 +1,28 @@
 <template>
+    <!-- Main container for the posts view -->
     <div class="postsView">
+        <!-- Left padding for aesthetic spacing and alignment -->
         <div class="Left-padding"></div>
+        
+        <!-- PostList component displaying a list of posts -->
         <PostList></PostList>
+
+        <!-- Right padding for aesthetic spacing and alignment -->
         <div class="Right-padding"></div>
     </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import PostList from "@/components/PostList.vue";   
+// Importing the PostList component from the components directory
+import PostList from "@/components/PostList.vue";
 
 export default {
-name: "PostsView",
+    name: "PostsView", // Name of the Vue component
     components: {
-        PostList
+        PostList // Registering PostList as a subcomponent
     }
+    // This component serves as a container for the PostList component,
+    // with additional padding elements on the left and right for layout purposes.
 };
 </script>
 
