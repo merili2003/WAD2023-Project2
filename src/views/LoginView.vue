@@ -10,7 +10,11 @@
     <label for="password">Password</label>
     <input type="password" required v-model="password">
     <div v-if="validateName" class="error"> {{ validateName }} </div>
-    <div v-if="validatePassword" class="error"> {{validatePassword}}</div>
+    <div v-if="validatePassword" class="error">
+    <ul>
+      <li v-for="(error, index) in validatePassword" :key="index">{{ error }}</li>
+    </ul>
+  </div>
   
   <div>
   
@@ -46,16 +50,29 @@ import router from '@/router';
     }},
     methods: {
      /* Validate password */
-     validateForm(){
-      console.log('signup is submitted');
-      this.validateName = (this.name.length <= 0 || this.name.length > 15) ? 'Name must be shorter than 15 chars and atleast 1 char' : ''
-     this.validatePassword = (this.password.length <8 || this.password> 15)? 'password must be between 8-15 chars':''
-     console.log(this.validatePassword);
-     let regex = /[A-Z]+[a-z]{2}[a-z]*[0-9]+_+[a-zA-z0-9_]*/
-     console.log(regex.test(this.password));
-     console.log(this.password);
-     this.validatePassword = regex.test(this.password)? this.validatePassword:'The password must start with atleast one uppercase alphabet character, atleast two lowercase alphabet characters, atleast one numeric value, atleast one "_" and the password should be of a specific length (at least 8 chars and less than 15 chars).'
-    },
+     
+     validateForm() {
+    this.validateName = (this.name.length <= 0 || this.name.length > 15) ? 'Name must be shorter than 15 chars and at least 1 char' : '';
+
+    let errors = [];
+    if (!/^[A-Z]/.test(this.password)) {
+      errors.push("Must start with an uppercase alphabet character.");
+    }
+    if (!/[a-z].*[a-z]/.test(this.password)) {
+      errors.push("Must include at least two lowercase alphabet characters.");
+    }
+    if (!/\d/.test(this.password)) {
+      errors.push("Must include at least one numeric value.");
+    }
+    if (!/_/.test(this.password)) {
+      errors.push("Must include the character '_'.");
+    }
+    if (this.password.length < 8 || this.password.length > 15) {
+      errors.push("Must be between 8-15 characters in length.");
+    }
+
+    this.validatePassword = errors; // Keep it as an array
+  },
      login() {
       this.validateForm();
       if (this.validateName.length == 0 && this.validatePassword.length == 0) {
@@ -71,14 +88,21 @@ import router from '@/router';
   form {
     max-width: 420px;
     margin: 30px auto;
-    background:  rgb(167, 154, 154);
+    background: rgba(0, 0, 0, 0.5);
     text-align: left;
     padding: 40px;
     border-radius: 10px;
-  }
+    border: 1px solid pink;
+    box-shadow: 0 0 10px rgb(255, 17, 192), 0 0 20px rgb(255, 39, 226), 0 0 30px pink, 0 0 40px pink; /* Neon pink glow */
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+form:hover {
+    box-shadow: 0 0 15px pink, 0 0 25px pink, 0 0 35px pink, 0 0 45px pink; /* Intensify glow on hover */
+}
   
   label {
-      color: rgb(8, 110, 110);
+      color: rgb(255, 0, 187);
       display: inline-block;
       margin: 25px 0 15px;
       font-size: 0.8em;
@@ -104,7 +128,7 @@ import router from '@/router';
       top: 2px;
   }
   button{
-  background:  rgb(8, 110, 110);
+  background:  rgb(144, 25, 255);
   border: 0;
   padding: 10px 20px;
   margin-top:  20px;
@@ -115,7 +139,7 @@ import router from '@/router';
       text-align: center;
   }
   .error{
-      color: red;
+      color: rgb(255, 255, 255);
       font-size: 0.8em;
       margin-top:  10px;
       text-align: center;
