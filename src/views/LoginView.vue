@@ -1,88 +1,84 @@
 <template>
-  <div>
-      
-    <form @submit.prevent ="validateForm">
-    <h2>Create an account</h2>
-    <label for="name">Name</label>
-    <input type="name" required v-model="name">
-    <label for="email">Email</label>
-    <input type="email" required v-model="email">
-    <label for="password">Password</label>
-    <input type="password" required v-model="password">
-    <div v-if="validateName" class="error"> {{ validateName }} </div>
-    <div v-if="validatePassword" class="error">
-    <ul>
-      <li v-for="(error, index) in validatePassword" :key="index">{{ error }}</li>
-    </ul>
+  <div>      
+    <form @submit.prevent="validateForm">
+      <h2>Create an account</h2>
+      <label for="name">Name</label>
+      <input type="name" required v-model="name">
+      <label for="email">Email</label>
+      <input type="email" required v-model="email">
+      <label for="password">Password</label>
+      <input type="password" required v-model="password">
+      <div v-if="validateName" class="error"> {{ validateName }} </div>
+      <div v-if="validatePassword.length" class="error">
+        <ul>
+          <li v-for="(error, index) in validatePassword" :key="index">{{ error }}</li>
+        </ul>
+      </div>
+      <div>
+        <input type="checkbox" required v-model="terms">
+        <label for="checkbox">Accept terms and conditions</label>
+      </div>
+      <div class="submit">
+        <button @click="login">Sign up</button>
+      </div>
+    </form>
   </div>
-  
-  <div>
-  
-  <input type="checkbox" required v-model="terms">
-  <label for="checkbox">Accept terms and conditions</label>
-  </div>
-  
-  <div class="submit">
-      <button @click="login">Sign up </button>
-  </div>
-  </form>
-  
-  
-  </div>
-  
-  
-  </template>
-  
-  <script>
+</template>
+
+<script>
 import router from '@/router';
 
-  export default {
+export default {
   name: "LoginView", 
-  
-  data: function() {
-      return {
-     name: '',
-     email: '',
-     password: '',
-     terms: false,
-     validateName: '',
-     validatePassword:'',
-    }},
-    methods: {
-     /* Validate password */
-     
-     validateForm() {
-    this.validateName = (this.name.length <= 0 || this.name.length > 15) ? 'Name must be shorter than 15 chars and at least 1 char' : '';
-
-    let errors = [];
-    if (!/^[A-Z]/.test(this.password)) {
-      errors.push("Must start with an uppercase alphabet character.");
-    }
-    if (!/[a-z].*[a-z]/.test(this.password)) {
-      errors.push("Must include at least two lowercase alphabet characters.");
-    }
-    if (!/\d/.test(this.password)) {
-      errors.push("Must include at least one numeric value.");
-    }
-    if (!/_/.test(this.password)) {
-      errors.push("Must include the character '_'.");
-    }
-    if (this.password.length < 8 || this.password.length > 15) {
-      errors.push("Must be between 8-15 characters in length.");
-    }
-
-    this.validatePassword = errors; // Keep it as an array
+  data() {
+    return {
+      name: '',
+      email: '',
+      password: '',
+      terms: false,
+      validateName: '',
+      validatePassword: [],
+    };
   },
-     login() {
-      this.validateForm();
-      if (this.validateName.length == 0 && this.validatePassword.length == 0) {
-        this.$store.dispatch("loginAction", {name:this.name, mail:this.email});
-        router.push({path: "/"});
+  methods: {
+    validateForm() {
+      this.validateName = (this.name.length <= 0 || this.name.length > 15) ? 'Name must be shorter than 15 chars and at least 1 char' : '';
+      let errors = [];
+      if (!/^[A-Z]/.test(this.password)) {
+        errors.push("Must start with an uppercase alphabet character.");
       }
-     }
+      if (!/[a-z].*[a-z]/.test(this.password)) {
+        errors.push("Must include at least two lowercase alphabet characters.");
+      }
+      if (!/\d/.test(this.password)) {
+        errors.push("Must include at least one numeric value.");
+      }
+      if (!/_/.test(this.password)) {
+        errors.push("Must include the character '_'.");
+      }
+      if (this.password.length < 8 || this.password.length > 15) {
+        errors.push("Must be between 8-15 characters in length.");
+      }
+      this.validatePassword = errors;
+    },
+    login() {
+    this.validateForm();
+    if (this.validateName === '' && !this.validatePassword.length && this.terms) {
+      this.$store.dispatch("loginAction", { name: this.name, email: this.email })
+        .then(() => {
+          this.$router.push({ path: '/' });
+        })
+        .catch(error => {
+          console.error("Error during login:", error);
+        });
+    } else {
+      console.log("Login validation failed");
     }
+  },
+
   }
-  </script>
+}
+</script>
   
   <style scoped>
   form {

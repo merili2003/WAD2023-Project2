@@ -13,13 +13,9 @@ export default createStore({
     setPosts: (state, posts) => {
       state.postList = posts;
     },
-    logIn: (state, {name, mail}) => {
-      state.activeAccount.name = name;
-      state.activeAccount.mail = mail;
-    },
-    logOut: state => {
-      state.activeAccount.name = "";
-      state.activeAccount.mail = "";
+    setUserLoggedIn(state, payload) {
+      state.user = payload;
+      state.isLoggedIn = true; 
     },
     addLike: (state, postIndex) => {
       state.postList[postIndex].likes += 1;
@@ -53,12 +49,14 @@ export default createStore({
           console.error('Error fetching posts:', error);
       }
   },
-    loginAction: (act, {name, mail}) => {
-      act.commit("logIn", {name, mail})
-    },
-    logoutAction: act => {
-      act.commit("logOut")
-    },
+  loginAction({ commit }, payload) {
+    // Perform login logic here, like an API call
+
+    // Assuming login is successful, commit a mutation
+    commit('setUserLoggedIn', payload);
+
+    // Handle API response and errors as needed
+  },
     addLikeAction: (act, postIndex) => {
       act.commit("addLike", postIndex);
     },
