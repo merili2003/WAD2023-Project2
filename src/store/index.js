@@ -8,71 +8,264 @@ export default createStore({
 
   // Getters: Compute derived state based on store state. Good for calculating values
   getters: {
-    // Determines if a user is logged in based on the presence of their name
-    loggedIn: state => {
-      return state.activeAccount.name ? true : false;
-    }
+
   },
 
   // Mutations: Synchronous functions to directly mutate state
   mutations: {
     // Sets the list of posts to the Vuex state
     setPosts: (state, posts) => {
-      state.postList = posts;
+      state.postList = posts ?? [];
     },
-    // Sets the user's logged-in status in the Vuex state
-    setUserLoggedIn(state, payload) {
-      state.user = payload;
-      state.isLoggedIn = true; 
+    createPost: (state, data) => {
+      const { post } = data?.post
+      if (post)
+        state.postList[post.id] = post
     },
-    // Increments the likes count for a specific post
-    addLike: (state, postIndex) => {
-      state.postList[postIndex].likes += 1;
+    deletePost: (state, data) => {
+      const { id } = data?.id
+      if (id)
+        state.postList = state.postList.splice[id, 1]
     },
-    // Resets the likes for all posts
-    resetLikes: state => {
-      state.postList.forEach(post => post.likes = 0)
+    getLike: (state, data) => {
+      const { id } = data?.id
+      if (id)
+        state.postList[id].likes = data.likes
+    },
+    deleteAllPosts: (state) => {
+      state.postList = []
+    },
+    getPost: (state, data) => {
+      const { post } = data?.post
+      if (post)
+        state.postList[post.id] = post
+    },
+    getAllPosts: (state, data) => {
+      const { posts } = data?.posts
+      if (posts)
+        state.postList = posts
     }
   },
 
   // Actions: Asynchronous operations that can commit mutations
   actions: {
-    // Fetches posts asynchronously and commits the mutation to update the state
-    fetchPosts: async function ({ commit }) {
-      try {
-          const response = await fetch("https://gist.githubusercontent.com/koodikirjutaja/eb5d36442a1ff84bde1f4aec5b41ad21/raw");
-          if (response.ok) {
-              const data = await response.json();
-              const transformedPosts = data.Posts.map(post => {
-                  // Adjust image paths and ensure likes are initialized
-                  if (post.image) {
-                      post.image = post.image.replace('res/images', '/images');
-                  }
-                  if (post.pfp) {
-                      post.pfp = '/' + post.pfp.replace('res/', '');
-                  }
-                  post.likes = post.likes || 0; // Initialize likes
-                  return post;
-              });
-              commit('setPosts', transformedPosts); // Commit the posts to the state
-          } else {
-              console.error('Error fetching posts: Response not OK');
-          }
-      } catch (error) {
-          console.error('Error fetching posts:', error);
-      }
+    
+  signupAction: (act, {email, password}) => {
+    fetch("http://localhost:3000/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+          credentials: 'include', //  Don't forget to specify this if you need cookies
+          body: JSON.stringify({email: email, password: password}),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+      console.log(data);
+      //location.assign("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error");
+      });
   },
   // Commits a mutation to update the user's logged-in status
-  loginAction({ commit }, payload) {
-    commit('setUserLoggedIn', payload);
+  loginAction: (act, {email, password}) => {
+    // need to crypt pass
+    fetch("http://localhost:3000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+          credentials: 'include', //  Don't forget to specify this if you need cookies
+          body: JSON.stringify({email:email, password:password})
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        console.log('logged in');
+        this.$router.push("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error login");
+      });
+  },
+  logoutAction: (act) => {
+    fetch("http://localhost:3000/auth/logout", {
+          credentials: 'include', //  Don't forget to specify this if you need cookies
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        console.log('jwt removed');
+        //console.log('jwt removed:' + auth.authenticated());
+        this.$router.push("/login");
+        //location.assign("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error logout");
+      });
+  },
+  isAuthAction: (act) => {
+    fetch("http://localhost:3000/auth/authenticate", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      }, 
+        credentials: 'include', //  Don't forget to specify this if you need cookies
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        if (data?.authenticated === false)
+          location.assign("/signup");
+        return data;
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error authenticate");
+      });
+  },
+  createPostAction: (act, post) => {
+    fetch("http://localhost:3000/posts/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+          credentials: 'include', //  Don't forget to specify this if you need cookies
+          body: JSON.stringify({body: post.body}),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+      console.log(data);
+      act.commit("createPost", data);
+      //location.assign("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error");
+      });
+  },
+  deletePostAction: (act, postIndex) => {
+    fetch("http://localhost:3000/posts/delete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+          credentials: 'include', //  Don't forget to specify this if you need cookies
+          body: JSON.stringify({id: postIndex}),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+      console.log(data);
+      act.commit("deletePost", data)
+      //location.assign("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error");
+      });
   },
   // Action to commit the addLike mutation
   addLikeAction: (act, postIndex) => {
-    act.commit("addLike", postIndex);
+    fetch("http://localhost:3000/posts/addLike", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+          credentials: 'include', //  Don't forget to specify this if you need cookies
+          body: JSON.stringify({id: postIndex}),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+      console.log(data);
+      //location.assign("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error");
+      });
+  },
+  getLikeAction: (act, postIndex) => {
+    fetch("http://localhost:3000/posts/addLike", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+          credentials: 'include', //  Don't forget to specify this if you need cookies
+          body: JSON.stringify({id: postIndex}),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+      console.log(data);
+      act.commit("getLike", data);
+      //location.assign("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error");
+      });
   },
   // Action to commit the resetLikes mutation
-  resetLikesAction: act => {
-    act.commit("resetLikes")
+  deleteAllPostsAction: act => {
+    fetch("http://localhost:3000/posts/deleteAll", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+          credentials: 'include', //  Don't forget to specify this if you need cookies
+      })
+      .then((response) => response.json())
+      .then((data) => {
+      console.log(data);
+      act.commit("deleteAllPosts");
+      //location.assign("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error");
+      });
+  },
+  getPostAction: (act, postIndex) => {
+    fetch("http://localhost:3000/posts/get", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+          credentials: 'include', //  Don't forget to specify this if you need cookies
+          body: JSON.stringify({id: postIndex}),
+        })
+      .then((response) => response.json())
+      .then((data) => {
+      console.log(data);
+      act.commit("getPost", data);
+      //location.assign("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error");
+      });
+  },
+  getAllPostsAction: (act) => {
+    fetch("http://localhost:3000/posts/getAll", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+          credentials: 'include', //  Don't forget to specify this if you need cookies
+        })
+      .then((response) => response.json())
+      .then((data) => {
+      console.log(data);
+      act.commit("getAllPosts", data);
+      //location.assign("/");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("error");
+      });
   }
   },
   modules: {}, // Modules allow you to divide your store into modules
