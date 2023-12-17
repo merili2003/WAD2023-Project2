@@ -28,7 +28,7 @@ const createUsrsQuery = `
     CREATE TABLE IF NOT EXISTS "users" (
         id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
         email VARCHAR(200) NOT NULL UNIQUE,
-        password VARCHAR(200) NOT NULL 
+        password VARCHAR(200) NOT NULL
     );`;
 
 execute(createUsrsQuery).then(result => {
@@ -39,10 +39,9 @@ execute(createUsrsQuery).then(result => {
 const createPostsQuery = `
     CREATE TABLE IF NOT EXISTS "posts" (
         id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-        text VARCHAR(200) NOT NULL,
-        date DATETIME NOT NULL,
-        image_path VARCHAR(200),
-        userid INTEGER
+        body VARCHAR(200) NOT NULL,
+        date DATE NOT NULL,
+        likes INTEGER
     );`;
     //format: YYYY-MM-DD HH:MI:SS
 
