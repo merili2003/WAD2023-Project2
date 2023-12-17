@@ -27,21 +27,23 @@ export default createStore({
       if (id)
         state.postList = state.postList.splice[id, 1]
     },
-    getLike: (state, data) => {
+    updatePost: (state, data) => {
       const { id } = data?.id
+      const { body } = data?.body
       if (id)
-        state.postList[id].likes = data.likes
+        state.postList[id].body = body
     },
     deleteAllPosts: (state) => {
       state.postList = []
     },
     getPost: (state, data) => {
-      const { post } = data?.post
+      const post = data?.post
       if (post)
         state.postList[post.id] = post
     },
     getAllPosts: (state, data) => {
-      const { posts } = data?.posts
+      console.log(data)
+      const posts = data?.posts
       if (posts)
         state.postList = posts
     }
@@ -108,26 +110,6 @@ export default createStore({
         console.log("error logout");
       });
   },
-  isAuthAction: (act) => {
-    fetch("http://localhost:3000/auth/authenticate", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      }, 
-        credentials: 'include', //  Don't forget to specify this if you need cookies
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        if (data?.authenticated === false)
-          location.assign("/signup");
-        return data;
-      })
-      .catch((e) => {
-        console.log(e);
-        console.log("error authenticate");
-      });
-  },
   createPostAction: (act, post) => {
     fetch("http://localhost:3000/posts/create", {
         method: "POST",
@@ -149,13 +131,12 @@ export default createStore({
       });
   },
   deletePostAction: (act, postIndex) => {
-    fetch("http://localhost:3000/posts/delete", {
+    fetch("http://localhost:3000/posts/delete/:"+postIndex, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
           credentials: 'include', //  Don't forget to specify this if you need cookies
-          body: JSON.stringify({id: postIndex}),
       })
       .then((response) => response.json())
       .then((data) => {
@@ -168,39 +149,19 @@ export default createStore({
         console.log("error");
       });
   },
-  // Action to commit the addLike mutation
-  addLikeAction: (act, postIndex) => {
-    fetch("http://localhost:3000/posts/addLike", {
+  updatePostAction: (act, {postIndex, body}) => {
+    fetch("http://localhost:3000/posts/update/:"+postIndex, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
           credentials: 'include', //  Don't forget to specify this if you need cookies
-          body: JSON.stringify({id: postIndex}),
+          body: JSON.stringify({body: body}),
       })
       .then((response) => response.json())
       .then((data) => {
       console.log(data);
-      //location.assign("/");
-      })
-      .catch((e) => {
-        console.log(e);
-        console.log("error");
-      });
-  },
-  getLikeAction: (act, postIndex) => {
-    fetch("http://localhost:3000/posts/addLike", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-          credentials: 'include', //  Don't forget to specify this if you need cookies
-          body: JSON.stringify({id: postIndex}),
-      })
-      .then((response) => response.json())
-      .then((data) => {
-      console.log(data);
-      act.commit("getLike", data);
+      act.commit("updatePost", data)
       //location.assign("/");
       })
       .catch((e) => {
@@ -210,7 +171,7 @@ export default createStore({
   },
   // Action to commit the resetLikes mutation
   deleteAllPostsAction: act => {
-    fetch("http://localhost:3000/posts/deleteAll", {
+    fetch("http://localhost:3000/posts/delete", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -229,13 +190,12 @@ export default createStore({
       });
   },
   getPostAction: (act, postIndex) => {
-    fetch("http://localhost:3000/posts/get", {
+    fetch("http://localhost:3000/posts/get/:"+postIndex, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
           credentials: 'include', //  Don't forget to specify this if you need cookies
-          body: JSON.stringify({id: postIndex}),
         })
       .then((response) => response.json())
       .then((data) => {
@@ -249,7 +209,7 @@ export default createStore({
       });
   },
   getAllPostsAction: (act) => {
-    fetch("http://localhost:3000/posts/getAll", {
+    fetch("http://localhost:3000/posts/get", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -264,7 +224,7 @@ export default createStore({
       })
       .catch((e) => {
         console.log(e);
-        console.log("error");
+        console.log(e.message);
       });
   }
   },
