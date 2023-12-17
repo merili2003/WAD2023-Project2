@@ -28,7 +28,6 @@ app.listen(port, () => {
     console.log("Server is listening to port " + port)
 });
 
-
 // is used to check whether a user is authinticated
 app.get('/auth/authenticate', async(req, res) => {
     console.log('authentication request has been arrived');
@@ -76,8 +75,7 @@ app.post('/auth/signup', async(req, res) => {
         //console.log(token);
         //res.cookie("isAuthorized", true, { maxAge: 1000 * 60, httpOnly: true });
         //res.cookie('jwt', token, { maxAge: 6000000, httpOnly: true });
-        res
-            .status(201)
+        res.status(201)
             .cookie('jwt', token, { maxAge: 6000000, httpOnly: true })
             .json({ user_id: authUser.rows[0].id })
             .send;
@@ -86,6 +84,8 @@ app.post('/auth/signup', async(req, res) => {
         res.status(400).send(err.message);
     }
 });
+
+
 
 app.post('/auth/login', async(req, res) => {
     try {
@@ -110,13 +110,12 @@ app.post('/auth/login', async(req, res) => {
         if (!validPassword) return res.status(401).json({ error: "Incorrect password" });
 
         const token = await generateJWT(user.rows[0].id);
-        res
-            .status(201)
+        res.status(201)
             .cookie('jwt', token, { maxAge: 6000000, httpOnly: true })
             .json({ user_id: user.rows[0].id })
             .send;
     } catch (error) {
-        res.status(401).json({ error: error.message });
+        res.status(400).send(err.message);
     }
 });
 
@@ -124,4 +123,141 @@ app.post('/auth/login', async(req, res) => {
 app.get('/auth/logout', (req, res) => {
     console.log('delete jwt request arrived');
     res.status(202).clearCookie('jwt').json({ "Msg": "cookie cleared" }).send
+});
+
+// https://stackoverflow.com/a/10211214
+//format: YYYY-MM-DD HH:MI:SS
+const generateDateTime = () => {
+    var currentdate = new Date(); 
+    var datetime =    currentdate.getFullYear() + "-"
+                    + (currentdate.getMonth()+1)  + "-" 
+                    + currentdate.getDate() + " "
+                    + currentdate.getHours() + ":"  
+                    + currentdate.getMinutes() + ":" 
+                    + currentdate.getSeconds();
+    return datetime;
+}
+
+// Posts: 
+app.post('/posts/create', async(req, res) => {
+    try {
+        console.log("a post creating request has arrived");
+        //console.log(req.body);
+        const { body } = req.body;
+        const addPost = await pool.query( // insert the user and the hashed password into the database
+            "INSERT INTO posts (body, date, likes) VALUES($1, $2, $3) RETURNING*", [body, generateDateTime(), 0]
+        );
+        console.log(addPost.rows[0].id);
+        res.status(201)
+            .json({post: addPost.rows[0], postAdded: true })
+            .send;
+    } catch (err) {
+        console.error(err.message);
+        res.status(400).send(err.message);
+    }
+});
+
+app.post('/posts/delete', async(req, res) => {
+    try {
+        console.log("a post deletion request has arrived");
+        //console.log(req.body);
+        const { id } = req.id;
+        const deletePost = await pool.query( // insert the user and the hashed password into the database
+            "DELETE FROM posts WHERE id=$1 RETURNING*", [id]
+        );
+        console.log(deletePost.rows[0].id);
+        res.status(201)
+            .json({ id: id, postRemoved: true })
+            .send;
+    } catch (err) {
+        console.error(err.message);
+        res.status(400).send(err.message);
+    }
+});
+
+app.post('/posts/deleteAll', async(req, res) => {
+    try {
+        console.log("all posts deletion request has arrived");
+        //console.log(req.body);
+        const deleteAllPosts = await pool.query( // insert the user and the hashed password into the database
+            "DELETE FROM posts WHERE 1=1 RETURNING*"
+        );
+        console.log(deleteAllPosts.rows[0].id);
+        res.status(201)
+            .json({ postsDeleted: true })
+            .send;
+    } catch (err) {
+        console.error(err.message);
+        res.status(400).send(err.message);
+    }
+});
+
+app.get('/posts/get', async(req, res) => {
+    try {
+        console.log("a post getting request has arrived");
+        //console.log(req.body);
+        const { id } = req.id;
+        const getPost = await pool.query( // insert the user and the hashed password into the database
+            "SELECT * FROM posts WHERE id=$1s", [id]
+        );
+        console.log(getPost.rows[0].id);
+        res.status(201)
+            .json({post: getPost.rows[0]})
+            .send;
+    } catch (err) {
+        console.error(err.message);
+        res.status(400).send(err.message);
+    }
+});
+
+app.get('/posts/getAll', async(req, res) => {
+    try {
+        console.log("all posts getting request has arrived");
+        const getPosts = await pool.query( // insert the user and the hashed password into the database
+            "SELECT * FROM posts"
+        );
+        console.log(getPosts.rows[0].id);
+        res.status(201)
+            .json({posts: getPosts.rows})
+            .send();
+    } catch (err) {
+        console.error(err.message);
+        res.status(400).send(err.message);
+    }
+});
+
+app.put('/posts/addLike', async(req, res) => {
+    try {
+        console.log("liking request has arrived");
+        //console.log(req.body);
+        const { id } = req.id;
+        const addLike = await pool.query( // insert the user and the hashed password into the database
+            "UPDATE posts WHERE id=$1 SET likes = likes + 1 RETURNING*", [id]
+        );
+        console.log(addLike.rows[0].likes);
+        res.status(201)
+            .json({ liked: true })
+            .send;
+    } catch (err) {
+        console.error(err.message);
+        res.status(400).send(err.message);
+    }
+});
+
+app.get('/posts/getLike', async(req, res) => {
+    try {
+        console.log("liking request has arrived");
+        //console.log(req.body);
+        const { id } = req.id;
+        const getLike = await pool.query( // insert the user and the hashed password into the database
+            "SELECT likes FROM posts WHERE id=$1 RETURNING*", [id]
+        );
+        console.log(getLike.rows[0].likes);
+        res.status(201)
+            .json({id: id, likes: getLike.rows[0].likes})
+            .send;
+    } catch (err) {
+        console.error(err.message);
+        res.status(400).send(err.message);
+    }
 });
