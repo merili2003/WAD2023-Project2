@@ -25,15 +25,6 @@
         this.$store.dispatch("logoutAction")
         .then(this.$router.push({ path: "/signup" })); // Dispatch logout action to Vuex store
       }
-    },
-    mounted() {
-        this.$store.dispatch('isAuthAction')
-      .then((data) => {
-        if (data?.authenticated === false)
-          this.$router.push("/signup");
-      }).catch(e => {
-        this.$router.push("/signup");
-      });
     }
   };
   </script>
