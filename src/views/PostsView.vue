@@ -20,7 +20,7 @@ export default {
     name: "PostsView", // Name of the Vue component
     components: {
         PostList // Registering PostList as a subcomponent
-    }
+    },
     // This component serves as a container for the PostList component,
     // with additional padding elements on the left and right for layout purposes.
 };

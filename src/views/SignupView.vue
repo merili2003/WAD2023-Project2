@@ -4,7 +4,7 @@
     <!-- Form element using Vue's submit.prevent directive to manage form submission in a Vue-specific way. -->
     <form @submit.prevent="validateForm">
       <!-- Title of the form for user context. -->
-      <h2>Log in</h2>
+      <h2>Create an account</h2>
 
       <!-- Input field for the user's email, also utilizing Vue's v-model for binding. -->
       <label for="email">Email</label>
@@ -28,17 +28,16 @@
 
       <!-- Button to submit the form, invoking the login method. -->
       <div class="submit">
-        <button @click="login">Log In</button>
+        <button @click="signUp">Sign up</button>
       </div>
     </form>
-    <button @click="this.$router.push('/signup')">Sign Up</button>
   </div>
 </template>
 
 <script>
 
 export default {
-  name: "LoginView", 
+  name: "SignupView", 
   data() {
     return {
       // Variables for storing user input and validation messages, reactive to user interactions.
@@ -65,13 +64,14 @@ export default {
 
     },
     // Login method to handle user login.
-    login() {
+    signUp() {
       // Trigger form validation before proceeding.
       this.validateForm();
       // Check if all validations are passed and terms are agreed upon.
       if (!this.validatePassword.length && this.terms) {
         // Dispatch login action and handle promise.
-        this.$store.dispatch("loginAction", { email: this.email, password: this.password });
+        this.$store.dispatch("signupAction", { email: this.email, password: this.password })
+        .then(this.$router.push("/"));
       } else {
         console.log("Login validation failed");
       }

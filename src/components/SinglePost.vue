@@ -25,6 +25,7 @@ export default {
     methods: {
         addLike() {
             this.$store.dispatch("addLikeAction", this.postIndex);
+            this.$store.dispatch("getLikeAction", this.postIndex);
         }
     }
 }

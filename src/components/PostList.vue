@@ -1,7 +1,7 @@
 <template>
     <div class="Posts-container">
         <SinglePost :postData="post" :postIndex="index" v-for="(post,index) in postList" :key="index" :id="index"/>
-        <button class="link" @click="resetLikes">Reset Likes</button>
+        <button class="link" @click="deleteAllPosts">Delete all posts</button>
     </div>
 </template>
 
@@ -13,6 +13,7 @@ export default {
     computed: {
         // Computed property to access the list of posts from the store
         postList() {
+            this.$store.dispatch("getAllPostsAction")
             return this.$store.state.postList;
         }
     },
@@ -20,10 +21,11 @@ export default {
         // Method to dispatch action to add a like to a post
         addLike(postIndex) {
             this.$store.dispatch("addLikeAction", postIndex);
+            this.$store.dispatch("getLikeAction", postIndex);
         },
         // Method to dispatch action to reset likes for all posts
-        resetLikes() {
-            this.$store.dispatch("resetLikesAction");
+        deleteAllPosts() {
+            this.$store.dispatch("deleteAllPostsAction");
         }
     }
 };

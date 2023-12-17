@@ -22,27 +22,18 @@
     },
     methods: {
       logOut() {
-        this.$store.dispatch("logoutAction"); // Dispatch logout action to Vuex store
-        this.$router.push({ path: "/login" }); // Redirect user to login page
+        this.$store.dispatch("logoutAction")
+        .then(this.$router.push({ path: "/signup" })); // Dispatch logout action to Vuex store
       }
     },
     mounted() {
-      this.$store.dispatch('fetchPosts'); // Fetch posts from the server when component is mounted
-    },
-    computed: {
-      // Computed properties for accessing Vuex store state and getters
-      loggedIn() {
-        return this.$store.getters.loggedIn; // Returns the logged-in state
-      },
-      activePfp() {
-        return this.$store.state.activeAccount.pfp ? this.$store.state.activeAccount.pfp : '../pfp.png'; // Returns active profile picture or default
-      },
-      activeName() {
-        return this.$store.state.activeAccount.name; // Returns the name of the active account
-      },
-      activeMail() {
-        return this.$store.state.activeAccount.mail; // Returns the email of the active account
-      }
+        this.$store.dispatch('isAuthAction')
+      .then((data) => {
+        if (data?.authenticated === false)
+          this.$router.push("/signup");
+      }).catch(e => {
+        this.$router.push("/signup");
+      });
     }
   };
   </script>
