@@ -145,7 +145,7 @@ app.post('/posts/create', async(req, res) => {
         //console.log(req.body);
         const { body } = req.body;
         const addPost = await pool.query( // insert the user and the hashed password into the database
-            "INSERT INTO posts (body, date, likes) VALUES($1, $2, $3) RETURNING*", [body, generateDateTime(), 0]
+            "INSERT INTO posts (body, date) VALUES($1, $2) RETURNING*", [body, generateDateTime()]
         );
         console.log(addPost.rows[0].id);
         res.status(201)
@@ -157,11 +157,11 @@ app.post('/posts/create', async(req, res) => {
     }
 });
 
-app.post('/posts/delete', async(req, res) => {
+app.post('/posts/delete/:id', async(req, res) => {
     try {
         console.log("a post deletion request has arrived");
         //console.log(req.body);
-        const { id } = req.id;
+        const { id } = req.params;
         const deletePost = await pool.query( // insert the user and the hashed password into the database
             "DELETE FROM posts WHERE id=$1 RETURNING*", [id]
         );
@@ -175,7 +175,26 @@ app.post('/posts/delete', async(req, res) => {
     }
 });
 
-app.post('/posts/deleteAll', async(req, res) => {
+app.put('/posts/update/:id', async(req, res) => {
+    try {
+        console.log("a post update request has arrived");
+        //console.log(req.body);
+        const { id } = req.params;
+        const { body } = req.body
+        const updatePost = await pool.query( // insert the user and the hashed password into the database
+            "UPDATE posts SET body=$2 WHERE id=$1 RETURNING*", [id, body]
+        );
+        console.log(updatePost.rows[0].id);
+        res.status(201)
+            .json({ id: id, body: body, postUpdated: true })
+            .send;
+    } catch (err) {
+        console.error(err.message);
+        res.status(400).send(err.message);
+    }
+});
+
+app.post('/posts/delete', async(req, res) => {
     try {
         console.log("all posts deletion request has arrived");
         //console.log(req.body);
@@ -192,11 +211,11 @@ app.post('/posts/deleteAll', async(req, res) => {
     }
 });
 
-app.get('/posts/get', async(req, res) => {
+app.get('/posts/get/:id', async(req, res) => {
     try {
         console.log("a post getting request has arrived");
         //console.log(req.body);
-        const { id } = req.id;
+        const { id } = req.params;
         const getPost = await pool.query( // insert the user and the hashed password into the database
             "SELECT * FROM posts WHERE id=$1s", [id]
         );
@@ -210,7 +229,7 @@ app.get('/posts/get', async(req, res) => {
     }
 });
 
-app.get('/posts/getAll', async(req, res) => {
+app.get('/posts/get', async(req, res) => {
     try {
         console.log("all posts getting request has arrived");
         const getPosts = await pool.query( // insert the user and the hashed password into the database
@@ -220,42 +239,6 @@ app.get('/posts/getAll', async(req, res) => {
         res.status(201)
             .json({posts: getPosts.rows})
             .send();
-    } catch (err) {
-        console.error(err.message);
-        res.status(400).send(err.message);
-    }
-});
-
-app.put('/posts/addLike', async(req, res) => {
-    try {
-        console.log("liking request has arrived");
-        //console.log(req.body);
-        const { id } = req.id;
-        const addLike = await pool.query( // insert the user and the hashed password into the database
-            "UPDATE posts WHERE id=$1 SET likes = likes + 1 RETURNING*", [id]
-        );
-        console.log(addLike.rows[0].likes);
-        res.status(201)
-            .json({ liked: true })
-            .send;
-    } catch (err) {
-        console.error(err.message);
-        res.status(400).send(err.message);
-    }
-});
-
-app.get('/posts/getLike', async(req, res) => {
-    try {
-        console.log("liking request has arrived");
-        //console.log(req.body);
-        const { id } = req.id;
-        const getLike = await pool.query( // insert the user and the hashed password into the database
-            "SELECT likes FROM posts WHERE id=$1 RETURNING*", [id]
-        );
-        console.log(getLike.rows[0].likes);
-        res.status(201)
-            .json({id: id, likes: getLike.rows[0].likes})
-            .send;
     } catch (err) {
         console.error(err.message);
         res.status(400).send(err.message);

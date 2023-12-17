@@ -40,8 +40,7 @@ const createPostsQuery = `
     CREATE TABLE IF NOT EXISTS "posts" (
         id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
         body VARCHAR(200) NOT NULL,
-        date DATE NOT NULL,
-        likes INTEGER
+        date DATE NOT NULL
     );`;
     //format: YYYY-MM-DD HH:MI:SS
 
