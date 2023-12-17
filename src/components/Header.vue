@@ -6,7 +6,7 @@
         <!-- Navigation link to the Posts page -->
         <router-link class="link" to="/">Posts</router-link>
         <!-- Navigation link to the Login page -->
-        <router-link class="link" to="/login">Login</router-link>
+        <router-link class="link" to="/contacts">Contacts</router-link>
       </div>
     </header>
   </template>

@@ -1,18 +1,17 @@
 <template>
     <div class="thisPost">
         <div class="header">
-            <img :src="postData.pfp" alt="Profile picture">
+            <div></div>
             <p>{{ postData.date }}</p>
         </div>
         <div class="Post-content">
-            <img v-if="postData.image" :src="postData.image" :alt="postData['alt-image']">
             <p>{{ postData.body }}</p>
         </div>
         <div class="footer">
-            <button @click="addLike">
+            <button @click="editPost">
                 <img src="@/assets/like.png" alt="Like">
             </button>
-            <p v-if="postData.likes!==undefined && postData.likes!==null">Likes: {{ postData.likes }}</p>
+            <p>{{ "<--- edit me" }}</p>
         </div>
     </div>
 </template>
@@ -23,9 +22,8 @@ export default {
     name: "SinglePost",
     props: ["postData", "postIndex", "id"],
     methods: {
-        addLike() {
-            this.$store.dispatch("addLikeAction", this.postIndex);
-            this.$store.dispatch("getLikeAction", this.postIndex);
+        editPost() {
+            this.$router.push("/onepost/:"+this.id)
         }
     }
 }
@@ -48,8 +46,11 @@ export default {
 /* Header and footer style for individual posts */
 .header, .footer {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+}
+
+.header {
+    justify-content: space-between;
 }
 
 /* Define direction for header items in individual posts */

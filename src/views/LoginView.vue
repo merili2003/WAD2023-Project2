@@ -29,9 +29,11 @@
       <!-- Button to submit the form, invoking the login method. -->
       <div class="submit">
         <button @click="login">Log In</button>
+        <p> OR </p>
+        <button @click="this.$router.push('/signup')">Sign Up</button>
       </div>
     </form>
-    <button @click="this.$router.push('/signup')">Sign Up</button>
+    
   </div>
 </template>
 
@@ -71,7 +73,8 @@ export default {
       // Check if all validations are passed and terms are agreed upon.
       if (!this.validatePassword.length && this.terms) {
         // Dispatch login action and handle promise.
-        this.$store.dispatch("loginAction", { email: this.email, password: this.password });
+        this.$store.dispatch("loginAction", { email: this.email, password: this.password })
+        .then(this.$router.push({name: "home"}));
       } else {
         console.log("Login validation failed");
       }
@@ -133,6 +136,15 @@ form:hover {
   }
   h2, .submit{
       text-align: center;
+  }
+  .submit {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-around;
+  }
+  .submit > p {
+    padding-top: 1rem;
   }
   .error{
       color: rgb(255, 255, 255);

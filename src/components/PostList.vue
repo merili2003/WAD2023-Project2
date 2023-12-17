@@ -1,7 +1,11 @@
 <template>
     <div class="Posts-container">
-        <SinglePost :postData="post" :postIndex="index" v-for="(post,index) in postList" :key="index" :id="index"/>
-        <button class="link" @click="deleteAllPosts">Delete all posts</button>
+        <SinglePost :postData="post" :postIndex="index" v-for="(post) in postList" :key="post.id" :id="post.id"/>
+        <div class="footer2">
+            <button class="link" @click="addPost">Add post</button>
+            <button class="link" @click="deleteAllPosts">Delete all</button>
+        </div>
+        
     </div>
 </template>
 
@@ -13,19 +17,19 @@ export default {
     computed: {
         // Computed property to access the list of posts from the store
         postList() {
-            this.$store.dispatch("getAllPostsAction")
             return this.$store.state.postList;
         }
     },
+    mounted() {
+        this.$store.dispatch("getAllPostsAction");
+    },
     methods: {
-        // Method to dispatch action to add a like to a post
-        addLike(postIndex) {
-            this.$store.dispatch("addLikeAction", postIndex);
-            this.$store.dispatch("getLikeAction", postIndex);
-        },
         // Method to dispatch action to reset likes for all posts
         deleteAllPosts() {
             this.$store.dispatch("deleteAllPostsAction");
+        },
+        addPost() {
+            this.$router.push("/newpost")
         }
     }
 };
@@ -53,10 +57,15 @@ export default {
 }
 
 /* Header and footer style for individual posts */
-.header, .footer {
+.header, .footer, .footer2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.footer2 {
+    width: 60vw;
+    align-self: center;
 }
 
 /* Style for profile images in post header */

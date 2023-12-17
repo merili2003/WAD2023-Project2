@@ -3,9 +3,14 @@
     <div class="postsView">
         <!-- Left padding for aesthetic spacing and alignment -->
         <div class="Left-padding"></div>
+        <div class="button-and-postlist">
+
+            <button class="link" @click="logOut">Log Out</button>
+            <!-- PostList component displaying a list of posts -->
+            <PostList></PostList>
+
+        </div>
         
-        <!-- PostList component displaying a list of posts -->
-        <PostList></PostList>
 
         <!-- Right padding for aesthetic spacing and alignment -->
         <div class="Right-padding"></div>
@@ -21,13 +26,23 @@ export default {
     components: {
         PostList // Registering PostList as a subcomponent
     },
+    methods: {
+        logOut() {
+            this.$store.dispatch("logoutAction")
+            .then(this.$router.push({name: "login"}))
+        }
+    }
     // This component serves as a container for the PostList component,
     // with additional padding elements on the left and right for layout purposes.
 };
 </script>
 
 <style scoped>
-
+.button-and-postlist {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 .postsView {
     display: flex;
     flex-direction: row;
@@ -60,5 +75,26 @@ export default {
     .Right-padding {
         min-width: 0;
     }
+}
+.link {
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    background-color: rgba(0, 0, 0, 0.5); /* Similar to other elements */
+    color: white; /* Text color */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-top: 20px; /* Spacing above the button */
+    text-align: center;
+    display: block; /* To occupy full width of the container */
+    width: auto; /* Adjust width as per your design */
+    box-shadow: 0 0 5px pink, 0 0 10px pink; /* Neon pink glow */
+    margin-bottom: 20px;
+}
+
+.link:hover {
+    background-color: rgba(25, 25, 112, 0.3); /* Background color change on hover */
+    box-shadow: 0 0 10px pink, 0 0 20px pink; /* Intensify glow on hover */
+    color: rgb(249, 249, 249); /* Change text color on hover if needed */
 }
 </style>
