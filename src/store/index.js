@@ -15,8 +15,8 @@ export default createStore({
   mutations: {
     // Sets the list of posts to the Vuex state
     setPosts: (state, posts) => {
-      state.postList = posts ?? [];
-    },
+      state.postList = posts?.posts ?? []
+    },/*
     createPost: (state, data) => {
       const { post } = data?.post
       if (post)
@@ -24,29 +24,25 @@ export default createStore({
     },
     deletePost: (state, data) => {
       const { id } = data?.id
-      if (id)
+      if (id) {
         state.postList = state.postList.splice[id, 1]
+      }
+        
     },
     updatePost: (state, data) => {
       const { id } = data?.id
       const { body } = data?.body
       if (id)
         state.postList[id].body = body
-    },
+    },*/
     deleteAllPosts: (state) => {
       state.postList = []
-    },
+    },/*
     getPost: (state, data) => {
       const post = data?.post
       if (post)
         state.postList[post.id] = post
-    },
-    getAllPosts: (state, data) => {
-      console.log(data)
-      const posts = data?.posts
-      if (posts)
-        state.postList = posts
-    }
+    }*/
   },
 
   // Actions: Asynchronous operations that can commit mutations
@@ -122,7 +118,7 @@ export default createStore({
       .then((response) => response.json())
       .then((data) => {
       console.log(data);
-      act.commit("createPost", data);
+      //act.commit("createPost", data);
       //location.assign("/");
       })
       .catch((e) => {
@@ -130,8 +126,8 @@ export default createStore({
         console.log("error");
       });
   },
-  deletePostAction: (act, postIndex) => {
-    fetch("http://localhost:3000/posts/delete/:"+postIndex, {
+  deletePostAction: (act, {postIndex}) => {
+    fetch("http://localhost:3000/posts/delete/"+postIndex, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,7 +137,7 @@ export default createStore({
       .then((response) => response.json())
       .then((data) => {
       console.log(data);
-      act.commit("deletePost", data)
+      //act.commit("deletePost", data)
       //location.assign("/");
       })
       .catch((e) => {
@@ -150,7 +146,7 @@ export default createStore({
       });
   },
   updatePostAction: (act, {postIndex, body}) => {
-    fetch("http://localhost:3000/posts/update/:"+postIndex, {
+    fetch("http://localhost:3000/posts/update/" + postIndex, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -161,7 +157,7 @@ export default createStore({
       .then((response) => response.json())
       .then((data) => {
       console.log(data);
-      act.commit("updatePost", data)
+      //act.commit("updatePost", data)
       //location.assign("/");
       })
       .catch((e) => {
@@ -190,7 +186,7 @@ export default createStore({
       });
   },
   getPostAction: (act, postIndex) => {
-    fetch("http://localhost:3000/posts/get/:"+postIndex, {
+    fetch("http://localhost:3000/posts/get/"+postIndex, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -200,7 +196,7 @@ export default createStore({
       .then((response) => response.json())
       .then((data) => {
       console.log(data);
-      act.commit("getPost", data);
+      //act.commit("getPost", data);
       //location.assign("/");
       })
       .catch((e) => {
@@ -219,7 +215,7 @@ export default createStore({
       .then((response) => response.json())
       .then((data) => {
       console.log(data);
-      act.commit("getAllPosts", data);
+      act.commit("setPosts", data);
       //location.assign("/");
       })
       .catch((e) => {

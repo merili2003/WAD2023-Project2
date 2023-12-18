@@ -38,7 +38,7 @@ execute(createUsrsQuery).then(result => {
 });
 const createPostsQuery = `
     CREATE TABLE IF NOT EXISTS "posts" (
-        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        id SERIAL PRIMARY KEY,
         body VARCHAR(200) NOT NULL,
         date DATE NOT NULL
     );`;

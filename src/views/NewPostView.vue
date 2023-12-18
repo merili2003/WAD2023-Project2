@@ -62,6 +62,7 @@
         if (!this.validatePost.length && this.terms) {
           // Dispatch login action and handle promise.
           this.$store.dispatch("createPostAction", { body: this.body })
+          .then(this.$store.dispatch("getAllPostsAction"))
           .then(this.$router.push("/"));
         } else {
           console.log("Posting failed");

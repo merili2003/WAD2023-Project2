@@ -181,6 +181,7 @@ app.put('/posts/update/:id', async(req, res) => {
         //console.log(req.body);
         const { id } = req.params;
         const { body } = req.body
+        console.log(id, body)
         const updatePost = await pool.query( // insert the user and the hashed password into the database
             "UPDATE posts SET body=$2 WHERE id=$1 RETURNING*", [id, body]
         );
@@ -217,7 +218,7 @@ app.get('/posts/get/:id', async(req, res) => {
         //console.log(req.body);
         const { id } = req.params;
         const getPost = await pool.query( // insert the user and the hashed password into the database
-            "SELECT * FROM posts WHERE id=$1s", [id]
+            "SELECT * FROM posts WHERE id=$1", [id]
         );
         console.log(getPost.rows[0].id);
         res.status(201)

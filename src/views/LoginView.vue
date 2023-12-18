@@ -74,7 +74,7 @@ export default {
       if (!this.validatePassword.length && this.terms) {
         // Dispatch login action and handle promise.
         this.$store.dispatch("loginAction", { email: this.email, password: this.password })
-        .then(this.$router.push({name: "home"}));
+        .then(this.$router.push("/"));
       } else {
         console.log("Login validation failed");
       }

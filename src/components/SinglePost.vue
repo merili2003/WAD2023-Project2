@@ -23,7 +23,7 @@ export default {
     props: ["postData", "postIndex", "id"],
     methods: {
         editPost() {
-            this.$router.push("/onepost/:"+this.id)
+            this.$router.push("/onepost/"+this.id)
         }
     }
 }
