@@ -26,7 +26,7 @@ const routes = [
     },
     {
         path: "/contacts",
-        name: "contacs",
+        name: "contacts",
         component: ContactsView,
     },
     {
@@ -70,13 +70,12 @@ const authenticate = async() => {
 router.beforeEach(async (to, from) => {
     const data = await authenticate();
     const isAuthenticated = data?.authenticated ?? false;
-    if ( to.name === 'contacts' ) return { name: to.name }
     if ( isAuthenticated ) {
-        if ( to.name === 'login' || to.name === 'signup' )
+        if ( to.name !== 'contacts' && (to.name === 'login' || to.name === 'signup'))
             return { name: from.name }
     } 
     else {
-        if ( to.name !== 'login' && to.name !== 'signup' )
+        if ( to.name !== 'contacts' && to.name !== 'login' && to.name !== 'signup' )
             return { name: 'login' }
     }
   })
